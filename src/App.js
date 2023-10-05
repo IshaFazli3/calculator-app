@@ -14,10 +14,60 @@ export const ACTIONS = {
 function reducer(state, { type, payload }) {
   switch (type) {
     case ACTIONS.ADD_DIGIT:
+      if (payload.digit === "0" && state.currentOperand === "0") return state
+      if (payload.digit === "." && state.currentOperand.incldes("."))
+      
       return {
         ...state,
-        currentOperand: '${state.currentOperand || }${payload.digit}'
+        currentOperand: '${state.currentOperand || ""}${payload.digit}'
        }
+       case ACTIONS.CHOOSE_OPERATION:
+        if (state.currentOperand == null && state.previousOperand == null){
+          return state
+        }
+        if (state.currentOperand == null) {
+          return {
+            ...state,
+            operation: payload.operation,
+          }
+        }
+        if (state.previousOperand == null) {
+          return { 
+            ...state,
+            operation: payload.operation,
+            previousOperand: state.currentOperand,
+            currentOperand: null,
+          }
+        }
+        function evaluate({ currentOperand, previousOperand, operation}) {
+          const prev = parsefloat(previousOperand)
+          const current = parsefloat(currentOperand)
+          if (isNaN(prev) || isNaN(current)) return ""
+          let computation = ""
+          switch (operation) {
+            case "+";
+            computation = prev + current
+            break
+            case "-";
+            computation = prev - current
+            break
+            case "/";
+            computation = prev / current
+            break
+            case "*";
+            computation = prev * current
+            break
+          }
+          return computation.toString()
+        }
+        return {
+          ...state, 
+          previousOperand: evaluate(state),
+          operation: payload.operation,
+          currentOperand: null
+        }
+       case ACTIONS.CLEAR:
+        return {}
   }
 
 }
@@ -34,7 +84,8 @@ function App() {
 
          
       </div>
-      <button className="span-two">AC</button>
+      <button className="span-two" 
+      onClick={() => dispatch({ type: ACTIONS.CLEAR})}>AC</button>
       <button>DEL</button>
       <operationButton digit="/" dispatch={dispatch} />
       <DigitButton digit="1" dispatch={dispatch} />
