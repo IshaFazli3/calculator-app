@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import DigitButton from "./DigitButton";
-import OperationButton from "./DigitButton";
+import OperationButton from "./OperationButton";
 import "./Styles.css";
 
 export const ACTIONS = {
@@ -11,14 +11,15 @@ export const ACTIONS = {
   EVALUATE: 'evaluate'
 }
 
-function reducer(state, { type, payload}) {
-  switch(type){
+function reducer(state, { type, payload }) {
+  switch (type) {
     case ACTIONS.ADD_DIGIT:
       return {
         ...state,
-        currentOperand: '${currentOperand || ""}${payload.digit}'
-      }
+        currentOperand: '${state.currentOperand || }${payload.digit}'
+       }
   }
+
 }
 function App() {
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(reducer, 
